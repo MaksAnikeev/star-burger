@@ -64,24 +64,49 @@ def register_order(request):
     address = order_params['address']
     firstname = order_params['firstname']
     lastname = order_params['lastname']
-    client_phone = phonenumbers.parse(order_params['phonenumber'],'RU')
-    if phonenumbers.is_valid_number(client_phone):
-        phonenumber = order_params['phonenumber']
-        order = Order.objects.create(
-            address=address,
-            firstname=firstname,
-            lastname=lastname,
-            phonenumber=phonenumber,
+
+    try:
+        client_phone = phonenumbers.parse(order_params['phonenumber'], 'RU')
+        if phonenumbers.is_valid_number(client_phone):
+            phonenumber = order_params['phonenumber']
+        else:
+            return Response({"phonenumber": "Введен некорректный номер телефона"})
+    except:
+        return Response({"phonenumber": "Введен некорректный номер телефона"})
+
+    try:
+        order_params['products']
+    except:
+        return Response({"products": "Обязательное поле."})
+
+    if isinstance(order_params['products'], str):
+        return Response({"products": "Ожидался list со значениями, но был получен 'str'"})
+
+    if order_params['products'] == None:
+        return Response({"products": "Это поле не может быть пустым."})
+
+    if order_params['products'] == []:
+        return Response({"products": "Этот список не может быть пустым."})
+
+    if isinstance(order_params['products'], list):
+        product_params = order_params['products']
+
+    order = Order.objects.create(
+        address=address,
+        firstname=firstname,
+        lastname=lastname,
+        phonenumber=phonenumber,
+    )
+
+    for product_param in product_params:
+        quantity = product_param.get('quantity')
+        product_id = int(product_param.get('product'))
+        product = Product.objects.get(id=product_id)
+        OrderItem.objects.create(
+            product=product,
+            quantity=quantity,
+            order=order
         )
-        for product_param in order_params['products']:
-            quantity = product_param.get('quantity')
-            product_id = int(product_param.get('product'))
-            product = Product.objects.get(id=product_id)
-            OrderItem.objects.create(
-                product=product,
-                quantity=quantity,
-                order=order
-            )
-        return Response({})
-    print('введены не корректные данные')
+    return Response({})
+
 

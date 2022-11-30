@@ -61,8 +61,31 @@ def product_list_api(request):
 @api_view(['POST'])
 def register_order(request):
     order_params = request.data
+
+    try:
+        order_params['firstname']
+        order_params['lastname']
+        order_params['phonenumber']
+        order_params['address']
+        order_params['products']
+    except:
+        return Response({"firstname, lastname, phonenumber, address, products":
+                             "Обязательное поле."})
+
+    if (order_params['firstname'] and
+        order_params['lastname'] and
+        order_params['phonenumber'] and
+        order_params['address'] and
+        order_params['products']) == None:
+        return Response({"firstname, lastname, phonenumber, address, products":
+                             "Это поле не может быть пустым."})
+
+    if not isinstance(order_params['firstname'], str):
+        return Response({"firstname": "Not a valid string."})
+    else:
+        firstname = order_params['firstname']
+
     address = order_params['address']
-    firstname = order_params['firstname']
     lastname = order_params['lastname']
 
     try:
@@ -74,16 +97,8 @@ def register_order(request):
     except:
         return Response({"phonenumber": "Введен некорректный номер телефона"})
 
-    try:
-        order_params['products']
-    except:
-        return Response({"products": "Обязательное поле."})
-
     if isinstance(order_params['products'], str):
         return Response({"products": "Ожидался list со значениями, но был получен 'str'"})
-
-    if order_params['products'] == None:
-        return Response({"products": "Это поле не может быть пустым."})
 
     if order_params['products'] == []:
         return Response({"products": "Этот список не может быть пустым."})
@@ -101,6 +116,9 @@ def register_order(request):
     for product_param in product_params:
         quantity = product_param.get('quantity')
         product_id = int(product_param.get('product'))
+        max_product_id = Product.objects.count()
+        if product_id > max_product_id:
+            return Response({"products": f"Недопустимый первичный ключ {product_id}"})
         product = Product.objects.get(id=product_id)
         OrderItem.objects.create(
             product=product,

@@ -5,6 +5,8 @@ import json
 import phonenumbers
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.serializers import ValidationError, Serializer, CharField
+from rest_framework.serializers import ModelSerializer
 
 
 from .models import Product, Order, OrderItem
@@ -58,67 +60,39 @@ def product_list_api(request):
     return Response(dumped_products)
 
 
+class OrderItemSerializer(ModelSerializer):
+    class Meta:
+        model = OrderItem
+        fields = ['product', 'quantity']
+
+
+class OrderSerializer(ModelSerializer):
+    products = OrderItemSerializer(many=True,
+                                   allow_empty=False)
+    class Meta:
+        model = Order
+        fields = ['firstname', 'lastname', 'phonenumber', 'address', 'products']
+
+
 @api_view(['POST'])
 def register_order(request):
-    order_params = request.data
-
-    try:
-        order_params['firstname']
-        order_params['lastname']
-        order_params['phonenumber']
-        order_params['address']
-        order_params['products']
-    except:
-        return Response({"firstname, lastname, phonenumber, address, products":
-                             "Обязательное поле."})
-
-    if (order_params['firstname'] and
-        order_params['lastname'] and
-        order_params['phonenumber'] and
-        order_params['address'] and
-        order_params['products']) == None:
-        return Response({"firstname, lastname, phonenumber, address, products":
-                             "Это поле не может быть пустым."})
-
-    if not isinstance(order_params['firstname'], str):
-        return Response({"firstname": "Not a valid string."})
-    else:
-        firstname = order_params['firstname']
-
-    address = order_params['address']
-    lastname = order_params['lastname']
-
-    try:
-        client_phone = phonenumbers.parse(order_params['phonenumber'], 'RU')
-        if phonenumbers.is_valid_number(client_phone):
-            phonenumber = order_params['phonenumber']
-        else:
-            return Response({"phonenumber": "Введен некорректный номер телефона"})
-    except:
-        return Response({"phonenumber": "Введен некорректный номер телефона"})
-
-    if isinstance(order_params['products'], str):
-        return Response({"products": "Ожидался list со значениями, но был получен 'str'"})
-
-    if order_params['products'] == []:
-        return Response({"products": "Этот список не может быть пустым."})
-
-    if isinstance(order_params['products'], list):
-        product_params = order_params['products']
+    serializer = OrderSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
 
     order = Order.objects.create(
-        address=address,
-        firstname=firstname,
-        lastname=lastname,
-        phonenumber=phonenumber,
+        address=serializer.validated_data['address'],
+        firstname=serializer.validated_data['firstname'],
+        lastname=serializer.validated_data['lastname'],
+        phonenumber=serializer.validated_data['phonenumber'],
     )
 
+    product_params = serializer.validated_data['products']
     for product_param in product_params:
         quantity = product_param.get('quantity')
         product_id = int(product_param.get('product'))
         max_product_id = Product.objects.count()
         if product_id > max_product_id:
-            return Response({"products": f"Недопустимый первичный ключ {product_id}"})
+            raise ValidationError({"products": f"Недопустимый первичный ключ {product_id}"})
         product = Product.objects.get(id=product_id)
         OrderItem.objects.create(
             product=product,

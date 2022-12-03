@@ -68,10 +68,11 @@ class OrderItemSerializer(ModelSerializer):
 
 class OrderSerializer(ModelSerializer):
     products = OrderItemSerializer(many=True,
-                                   allow_empty=False)
+                                   allow_empty=False,
+                                   write_only=True)
     class Meta:
         model = Order
-        fields = ['firstname', 'lastname', 'phonenumber', 'address', 'products']
+        fields = ['id', 'firstname', 'lastname', 'phonenumber', 'address', 'products']
 
 
 @api_view(['POST'])
@@ -89,16 +90,11 @@ def register_order(request):
     product_params = serializer.validated_data['products']
     for product_param in product_params:
         quantity = product_param.get('quantity')
-        product_id = int(product_param.get('product'))
-        max_product_id = Product.objects.count()
-        if product_id > max_product_id:
-            raise ValidationError({"products": f"Недопустимый первичный ключ {product_id}"})
-        product = Product.objects.get(id=product_id)
+        product = product_param.get('product')
         OrderItem.objects.create(
             product=product,
             quantity=quantity,
             order=order
         )
-    return Response({})
-
-
+    serializer = OrderSerializer(order)
+    return Response(serializer.data, status=200)

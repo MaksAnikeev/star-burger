@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.shortcuts import reverse
 from django.templatetags.static import static
 from django.utils.html import format_html
+from django.db.models import Count, F, Sum, Value
 
 from .models import Product
 from .models import ProductCategory
@@ -110,8 +111,8 @@ class ProductAdmin(admin.ModelAdmin):
 
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
-    fields = ['product', 'preview', 'quantity']
-    readonly_fields = ['preview']
+    fields = ['product', 'preview', 'quantity', 'price', 'item_sum', 'catalog_price']
+    readonly_fields = ['preview', 'item_sum', 'catalog_price']
 
     def preview(self, obj):
         return format_html(
@@ -119,15 +120,36 @@ class OrderItemInline(admin.TabularInline):
             url=obj.product.image.url
         )
 
+    def item_sum(self, obj):
+        if obj.quantity and obj.price:
+            item_sum = obj.price*obj.quantity
+            return item_sum
+
+    def catalog_price(self, obj):
+        price = obj.product.price
+        return price
+
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = [
+        'id',
         'firstname',
         'lastname',
         'phonenumber',
         'address',
     ]
+    ordering = ['id']
+    readonly_fields = ['order_price']
+
+    def order_price(self, obj):
+        order_price = 0
+        for order_item in obj.order_items.all():
+            if order_item.quantity and order_item.price:
+                item_sum = order_item.quantity * order_item.price
+                order_price += item_sum
+        return order_price
+
     inlines = [
         OrderItemInline
     ]

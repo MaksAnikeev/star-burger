@@ -161,7 +161,7 @@ class Order(models.Model):
 
 class OrderItemQuerySet(models.QuerySet):
     def order_price(self):
-        order_items = self.annotate(item_price=F('product__price') * F('quantity'))
+        order_items = self.annotate(item_price=F('price') * F('quantity'))
         order_price = 0
         for order_item in order_items:
             order_price += order_item.item_price
@@ -186,6 +186,14 @@ class OrderItem(models.Model):
     quantity = models.IntegerField(
         verbose_name='количество',
         validators=[MinValueValidator(0), MaxValueValidator(10)]
+    )
+
+    price = models.DecimalField(
+        verbose_name='цена в заказе',
+        max_digits=8,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
+        default=0
     )
 
     objects = OrderItemQuerySet.as_manager()

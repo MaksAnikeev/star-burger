@@ -141,6 +141,7 @@ class OrderAdmin(admin.ModelAdmin):
         'lastname',
         'phonenumber',
         'address',
+        'order_status'
     ]
     ordering = ['id']
     readonly_fields = ['order_price']

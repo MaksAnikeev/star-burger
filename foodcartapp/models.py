@@ -150,6 +150,25 @@ class Order(models.Model):
         db_index=True
     )
 
+    NEW = 'New'
+    PROCESS = 'Process'
+    GO = 'Go'
+    DONE = 'Done'
+    STATUS_ORDER = (
+        (NEW, 'Необработанный'),
+        (PROCESS, 'Собираем'),
+        (GO, 'Доставка'),
+        (DONE, 'Выполнен'),
+        )
+
+    order_status = models.CharField(
+        verbose_name='статус заказа',
+        max_length=7,
+        choices=STATUS_ORDER,
+        default=NEW,
+        db_index=True
+        )
+
     class Meta:
         db_table = 'order'
         verbose_name = 'заказ'

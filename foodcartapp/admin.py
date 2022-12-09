@@ -141,6 +141,7 @@ class OrderAdmin(admin.ModelAdmin):
         'lastname',
         'phonenumber',
         'address',
+        'comment',
         'order_status'
     ]
     ordering = ['id']

@@ -150,6 +150,13 @@ class Order(models.Model):
         db_index=True
     )
 
+    comment = models.TextField(
+        verbose_name='комментарий к заказу',
+        default='',
+        blank=True,
+        null=True,
+    )
+
     NEW = 'New'
     PROCESS = 'Process'
     GO = 'Go'

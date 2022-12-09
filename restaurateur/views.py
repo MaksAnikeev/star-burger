@@ -103,7 +103,8 @@ def view_orders(request):
             'phonenumber': order.phonenumber,
             'address': order.address,
             'order_price': order_price,
-            'order_status': order.get_order_status_display()
+            'order_status': order.get_order_status_display(),
+            'comment': order.comment
             }
         orders_params.append(order_params)
 

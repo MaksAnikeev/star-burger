@@ -104,7 +104,8 @@ def view_orders(request):
             'address': order.address,
             'order_price': order_price,
             'order_status': order.get_order_status_display(),
-            'comment': order.comment
+            'comment': order.comment,
+            'payment': order.get_payment_display()
             }
         orders_params.append(order_params)
 

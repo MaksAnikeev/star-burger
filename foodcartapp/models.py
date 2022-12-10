@@ -177,6 +177,23 @@ class Order(models.Model):
         db_index=True
         )
 
+    RIGHT_NOW = 'right_now'
+    DELIVERY_CASH = 'delivery_pay_cash'
+    DELIVERY_CARD = 'delivery_pay_card'
+
+    PAYMENT = (
+        (RIGHT_NOW, 'Электронно'),
+        (DELIVERY_CASH, 'Наличностью при доставке'),
+    )
+
+    payment = models.CharField(
+        verbose_name='статус заказа',
+        max_length=17,
+        choices=PAYMENT,
+        default=DELIVERY_CASH,
+        db_index=True
+        )
+
     registrated = models.DateTimeField(
         verbose_name='время создания заказа',
         default=timezone.now

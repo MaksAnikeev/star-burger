@@ -211,6 +211,15 @@ class Order(models.Model):
         db_index=True
     )
 
+    restaurant = models.ForeignKey(
+        Restaurant,
+        related_name='orders',
+        verbose_name="ресторан",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True
+    )
+
     class Meta:
         db_table = 'order'
         verbose_name = 'заказ'

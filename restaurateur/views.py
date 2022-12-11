@@ -8,7 +8,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth import views as auth_views
 
 
-from foodcartapp.models import Product, Restaurant, Order, OrderItem
+from foodcartapp.models import Product, Restaurant, Order, OrderItem, RestaurantMenuItem
 from pprint import pprint
 
 class Login(forms.Form):
@@ -93,21 +93,55 @@ def view_restaurants(request):
 @user_passes_test(is_manager, login_url='restaurateur:login')
 def view_orders(request):
     orders_params = []
-    orders = Order.objects.all()
+    NEW = 'New'
+    orders = Order.objects.filter(order_status=NEW)
     for order in orders:
         order_price = OrderItem.objects.filter(order=order.id).order_price()
-        order_params = {
-            'id': order.id,
-            'firstname': order.firstname,
-            'lastname': order.lastname,
-            'phonenumber': order.phonenumber,
-            'address': order.address,
-            'order_price': order_price,
-            'order_status': order.get_order_status_display(),
-            'comment': order.comment,
-            'payment': order.get_payment_display()
+        order_items = order.order_items.all().prefetch_related('product')
+        restaurants_for_product = []
+        restaurant_menu = RestaurantMenuItem.objects.prefetch_related('restaurant')
+        for order_item in order_items:
+            restaurants = restaurant_menu.filter(product=order_item.product)
+            restaurants_names = [restaurant.restaurant.name for restaurant in restaurants]
+            restaurants_for_product.append(restaurants_names)
+
+        restaurants_for_order = []
+        for restaurant in restaurants_for_product:
+            restaurants_for_order = restaurant
+            restaurants_join = list(set(restaurants_for_order) & set(restaurant))
+            restaurants_for_order = restaurants_join
+
+        if order.restaurant:
+            PROCESS = 'Process'
+            order.order_status = PROCESS
+            order.save()
+            order_params = {
+                'id': order.id,
+                'firstname': order.firstname,
+                'lastname': order.lastname,
+                'phonenumber': order.phonenumber,
+                'address': order.address,
+                'order_price': order_price,
+                'order_status': order.get_order_status_display(),
+                'comment': order.comment,
+                'payment': order.get_payment_display(),
+                'restaurant': order.restaurant
             }
-        orders_params.append(order_params)
+            orders_params.append(order_params)
+        else:
+            order_params = {
+                'id': order.id,
+                'firstname': order.firstname,
+                'lastname': order.lastname,
+                'phonenumber': order.phonenumber,
+                'address': order.address,
+                'order_price': order_price,
+                'order_status': order.get_order_status_display(),
+                'comment': order.comment,
+                'payment': order.get_payment_display(),
+                'restaurants': restaurants_for_order
+                }
+            orders_params.append(order_params)
 
     context = {'order_params': orders_params}
     return render(request, template_name='order_items.html', context=context)

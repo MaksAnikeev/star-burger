@@ -7,6 +7,25 @@
     <h2>Необработанные заказы</h2>
   </center>
 
+  <style type="text/css">
+
+  details {
+  font: 12px "Open Sans", Calibri, sans-serif;
+  width: 200px;
+  }
+
+  details > summary {
+    padding: 2px 6px;
+    width: 15em;
+    background-color: #ddd;
+    border: none;
+    box-shadow: 3px 3px 4px black;
+    cursor: pointer;
+    list-style: none;
+  }
+  </style>
+
+
   <hr/>
   <br/>
   <br/>
@@ -21,6 +40,7 @@
       <th>Телефон</th>
       <th>Адрес доставки</th>
       <th>Комментарии</th>
+      <th>Рестораны</th>
       <th>Ссылка на админку</th>
 
     </tr>
@@ -35,6 +55,19 @@
         <td>{{item.phonenumber}}</td>
         <td>{{item.address}}</td>
         <td>{{item.comment}}</td>
+        {% if item.restaurants %}
+          <td><details>
+            <summary>Данный заказ могут собрать в ресторанах:</summary>
+            {% for restaurant in item.restaurants %}
+            <h7><span class="badge badge-info">{{restaurant}}</span></h7>
+            {% endfor %}
+          </details></td>
+        {% else %}
+          <td><details>
+            <summary>Заказ собирают в:</summary>
+            {{item.restaurant}}
+          </details></td>
+        {% endif %}
         <td><a href="{% url 'admin:foodcartapp_order_change' object_id=item.id %}?next={{ request.get_full_path|urlencode }}">
           Редактировать</a></td>
       </tr>

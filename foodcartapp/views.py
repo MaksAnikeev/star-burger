@@ -1,24 +1,18 @@
 import requests
-from django.http import JsonResponse
+from django.db import transaction
 from django.templatetags.static import static
-from pprint import pprint
-import json
-import phonenumbers
+from environs import Env
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.serializers import ValidationError, Serializer, CharField
 from rest_framework.serializers import ModelSerializer
-from django.db import transaction
 
-# from ..restaurateur.views import fetch_coordinates
-from .models import Product, Order, OrderItem, Coordinate
-from environs import Env
-
+from .models import Coordinate, Order, OrderItem, Product
 
 env = Env()
 env.read_env()
 
 api_yandex_key = env('API_YANDEX_KEY')
+
 
 @api_view(['GET'])
 def banners_list_api(request):
@@ -75,12 +69,17 @@ class OrderItemSerializer(ModelSerializer):
 
 
 class OrderSerializer(ModelSerializer):
-    products = OrderItemSerializer(many=True,
-                                   allow_empty=False,
-                                   write_only=True)
+    products = OrderItemSerializer(
+        many=True,
+        allow_empty=False,
+        write_only=True
+        )
+
     class Meta:
         model = Order
-        fields = ['id', 'firstname', 'lastname', 'phonenumber', 'address', 'products']
+        fields = ['id', 'firstname', 'lastname',
+                  'phonenumber', 'address', 'products']
+
 
 def fetch_coordinates(apikey, address):
     base_url = "https://geocode-maps.yandex.ru/1.x"
@@ -88,7 +87,8 @@ def fetch_coordinates(apikey, address):
         "geocode": address,
         "apikey": apikey,
         "format": "json",
-    })
+        }
+    )
     response.raise_for_status()
     found_places = response.json()['response']['GeoObjectCollection']['featureMember']
 
@@ -122,7 +122,7 @@ def register_order(request):
         firstname=serializer.validated_data['firstname'],
         lastname=serializer.validated_data['lastname'],
         phonenumber=serializer.validated_data['phonenumber'],
-    )
+        )
 
     product_params = serializer.validated_data['products']
     for product_param in product_params:

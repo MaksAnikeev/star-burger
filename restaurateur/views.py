@@ -1,16 +1,14 @@
 from django import forms
-from django.shortcuts import redirect, render
-from django.views import View
-from django.urls import reverse_lazy
-from django.contrib.auth.decorators import user_passes_test
-
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import views as auth_views
-
-
-from foodcartapp.models import Product, Restaurant, Order, OrderItem, RestaurantMenuItem, Coordinate
-from pprint import pprint
+from django.contrib.auth.decorators import user_passes_test
+from django.shortcuts import redirect, render
+from django.urls import reverse_lazy
+from django.views import View
 from geopy import distance
+
+from foodcartapp.models import (Coordinate, Order, OrderItem, Product,
+                                Restaurant, RestaurantMenuItem)
 
 
 class Login(forms.Form):
@@ -72,8 +70,10 @@ def view_products(request):
 
     products_with_restaurant_availability = []
     for product in products:
-        availability = {item.restaurant_id: item.availability for item in product.menu_items.all()}
-        ordered_availability = [availability.get(restaurant.id, False) for restaurant in restaurants]
+        availability = {item.restaurant_id: item.availability
+                        for item in product.menu_items.all()}
+        ordered_availability = [availability.get(restaurant.id, False)
+                                for restaurant in restaurants]
 
         products_with_restaurant_availability.append(
             (product, ordered_availability)
@@ -90,6 +90,7 @@ def view_restaurants(request):
     return render(request, template_name="restaurants_list.html", context={
         'restaurants': Restaurant.objects.all(),
     })
+
 
 def get_restaurants_distance(restaurant):
     return restaurant['distance']

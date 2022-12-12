@@ -1,8 +1,8 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
-from phonenumber_field.modelfields import PhoneNumberField
-from django.db.models import Count, F, Sum, Value
+from django.db.models import F
 from django.utils import timezone
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 class Restaurant(models.Model):
@@ -269,6 +269,7 @@ class OrderItem(models.Model):
     )
 
     objects = OrderItemQuerySet.as_manager()
+
     class Meta:
         db_table = 'order_items'
         verbose_name = 'продукт в заказе'

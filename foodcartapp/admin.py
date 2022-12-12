@@ -1,19 +1,12 @@
 from django.contrib import admin
+from django.http import HttpResponseRedirect
 from django.shortcuts import reverse
 from django.templatetags.static import static
 from django.utils.html import format_html
-from django.db.models import Count, F, Sum, Value
-from django.http import HttpResponseRedirect
 from django.utils.http import url_has_allowed_host_and_scheme
-from django.utils.encoding import iri_to_uri
 
-from .models import Product
-from .models import ProductCategory
-from .models import Restaurant
-from .models import RestaurantMenuItem
-from .models import Order
-from .models import OrderItem
-from .models import Coordinate
+from .models import (Coordinate, Order, OrderItem, Product, ProductCategory,
+                     Restaurant, RestaurantMenuItem)
 
 
 class RestaurantMenuItemInline(admin.TabularInline):
@@ -97,14 +90,22 @@ class ProductAdmin(admin.ModelAdmin):
     def get_image_preview(self, obj):
         if not obj.image:
             return 'выберите картинку'
-        return format_html('<img src="{url}" style="max-height: 200px;"/>', url=obj.image.url)
+        return format_html('<img src="{url}" style="max-height: 200px;"/>',
+                           url=obj.image.url)
     get_image_preview.short_description = 'превью'
 
     def get_image_list_preview(self, obj):
         if not obj.image or not obj.id:
             return 'нет картинки'
-        edit_url = reverse('admin:foodcartapp_product_change', args=(obj.id,))
-        return format_html('<a href="{edit_url}"><img src="{src}" style="max-height: 50px;"/></a>', edit_url=edit_url, src=obj.image.url)
+        edit_url = reverse(
+            'admin:foodcartapp_product_change',
+            args=(obj.id,)
+        )
+        return format_html(
+            '<a href="{edit_url}"><img src="{src}" style="max-height: 50px;"/></a>',
+            edit_url=edit_url,
+            src=obj.image.url
+            )
     get_image_list_preview.short_description = 'превью'
 
 
@@ -115,7 +116,8 @@ class ProductAdmin(admin.ModelAdmin):
 
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
-    fields = ['product', 'preview', 'quantity', 'price', 'item_sum', 'catalog_price']
+    fields = ['product', 'preview', 'quantity',
+              'price', 'item_sum', 'catalog_price']
     readonly_fields = ['preview', 'item_sum', 'catalog_price']
 
     def preview(self, obj):
@@ -169,6 +171,7 @@ class OrderAdmin(admin.ModelAdmin):
     inlines = [
         OrderItemInline
     ]
+
 
 @admin.register(Coordinate)
 class CoordinateAdmin(admin.ModelAdmin):

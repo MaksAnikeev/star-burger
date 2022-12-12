@@ -8,8 +8,10 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth import views as auth_views
 
 
-from foodcartapp.models import Product, Restaurant, Order, OrderItem, RestaurantMenuItem
+from foodcartapp.models import Product, Restaurant, Order, OrderItem, RestaurantMenuItem, Coordinate
 from pprint import pprint
+from geopy import distance
+
 
 class Login(forms.Form):
     username = forms.CharField(
@@ -89,27 +91,50 @@ def view_restaurants(request):
         'restaurants': Restaurant.objects.all(),
     })
 
+def get_restaurants_distance(restaurant):
+    return restaurant['distance']
+
 
 @user_passes_test(is_manager, login_url='restaurateur:login')
 def view_orders(request):
     orders_params = []
     NEW = 'New'
     orders = Order.objects.filter(order_status=NEW)
+    coordinates = Coordinate.objects.all()
     for order in orders:
-        order_price = OrderItem.objects.filter(order=order.id).order_price()
-        order_items = order.order_items.all().prefetch_related('product')
         restaurants_for_product = []
         restaurant_menu = RestaurantMenuItem.objects.prefetch_related('restaurant')
+        order_items = order.order_items.all().prefetch_related('product')
         for order_item in order_items:
             restaurants = restaurant_menu.filter(product=order_item.product)
             restaurants_names = [restaurant.restaurant.name for restaurant in restaurants]
             restaurants_for_product.append(restaurants_names)
 
-        restaurants_for_order = []
+        restaurants_for_order = restaurants_for_product[0]
         for restaurant in restaurants_for_product:
-            restaurants_for_order = restaurant
             restaurants_join = list(set(restaurants_for_order) & set(restaurant))
             restaurants_for_order = restaurants_join
+
+        coordinate_client = coordinates.get(address=order.address)
+        client_coordinates = (coordinate_client.lng, coordinate_client.lat)
+
+        restaurants_for_order_distance = []
+        for restaurant in restaurants_for_order:
+            restaurant_params = Restaurant.objects.get(name=restaurant)
+            restaurant_address = restaurant_params.address
+            coordinate_restaurant = coordinates.get(address=restaurant_address)
+            restaurant_coordinates = (coordinate_restaurant.lng, coordinate_restaurant.lat)
+            restaurant_distance = round(distance.distance(client_coordinates,
+                                                          restaurant_coordinates).km, 2)
+            restaurant_distance_params = {
+                'name': restaurant,
+                'distance': restaurant_distance}
+            restaurants_for_order_distance.append(restaurant_distance_params)
+
+        restaurants_for_order_distance_sorted = sorted(restaurants_for_order_distance,
+                                                       key=get_restaurants_distance)
+
+        order_price = OrderItem.objects.filter(order=order.id).order_price()
 
         if order.restaurant:
             PROCESS = 'Process'
@@ -139,7 +164,7 @@ def view_orders(request):
                 'order_status': order.get_order_status_display(),
                 'comment': order.comment,
                 'payment': order.get_payment_display(),
-                'restaurants': restaurants_for_order
+                'restaurants': restaurants_for_order_distance_sorted
                 }
             orders_params.append(order_params)
 

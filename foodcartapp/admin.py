@@ -13,6 +13,7 @@ from .models import Restaurant
 from .models import RestaurantMenuItem
 from .models import Order
 from .models import OrderItem
+from .models import Coordinate
 
 
 class RestaurantMenuItemInline(admin.TabularInline):
@@ -168,3 +169,11 @@ class OrderAdmin(admin.ModelAdmin):
     inlines = [
         OrderItemInline
     ]
+
+@admin.register(Coordinate)
+class CoordinateAdmin(admin.ModelAdmin):
+    list_display = [
+        'id',
+        'address'
+    ]
+    ordering = ['id']

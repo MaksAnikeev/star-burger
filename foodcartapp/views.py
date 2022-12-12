@@ -1,3 +1,4 @@
+import requests
 from django.http import JsonResponse
 from django.templatetags.static import static
 from pprint import pprint
@@ -9,9 +10,15 @@ from rest_framework.serializers import ValidationError, Serializer, CharField
 from rest_framework.serializers import ModelSerializer
 from django.db import transaction
 
+# from ..restaurateur.views import fetch_coordinates
+from .models import Product, Order, OrderItem, Coordinate
+from environs import Env
 
-from .models import Product, Order, OrderItem
 
+env = Env()
+env.read_env()
+
+api_yandex_key = env('API_YANDEX_KEY')
 
 @api_view(['GET'])
 def banners_list_api(request):
@@ -75,6 +82,22 @@ class OrderSerializer(ModelSerializer):
         model = Order
         fields = ['id', 'firstname', 'lastname', 'phonenumber', 'address', 'products']
 
+def fetch_coordinates(apikey, address):
+    base_url = "https://geocode-maps.yandex.ru/1.x"
+    response = requests.get(base_url, params={
+        "geocode": address,
+        "apikey": apikey,
+        "format": "json",
+    })
+    response.raise_for_status()
+    found_places = response.json()['response']['GeoObjectCollection']['featureMember']
+
+    if not found_places:
+        return None
+
+    most_relevant = found_places[0]
+    lng, lat = most_relevant['GeoObject']['Point']['pos'].split(" ")
+    return lng, lat
 
 @transaction.atomic
 @api_view(['POST'])
@@ -82,8 +105,20 @@ def register_order(request):
     serializer = OrderSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 
+    address = serializer.validated_data['address']
+    lng, lat = fetch_coordinates(
+        apikey=api_yandex_key,
+        address=address
+        )
+
+    Coordinate.objects.get_or_create(
+        address=address,
+        lng=lng,
+        lat=lat
+        )
+
     order = Order.objects.create(
-        address=serializer.validated_data['address'],
+        address=address,
         firstname=serializer.validated_data['firstname'],
         lastname=serializer.validated_data['lastname'],
         phonenumber=serializer.validated_data['phonenumber'],

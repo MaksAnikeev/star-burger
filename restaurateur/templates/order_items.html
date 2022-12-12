@@ -59,7 +59,7 @@
           <td><details>
             <summary>Данный заказ могут собрать в ресторанах:</summary>
             {% for restaurant in item.restaurants %}
-            <h7><span class="badge badge-info">{{restaurant}}</span></h7>
+            <h7><span class="badge badge-info">{{restaurant.name}} - {{restaurant.distance}} км</span></h7>
             {% endfor %}
           </details></td>
         {% else %}

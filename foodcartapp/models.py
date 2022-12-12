@@ -202,12 +202,14 @@ class Order(models.Model):
     called = models.DateTimeField(
         verbose_name='дата звонка',
         null=True,
+        blank=True,
         db_index=True
     )
 
     delivered = models.DateTimeField(
         verbose_name='дата доставки',
         null=True,
+        blank=True,
         db_index=True
     )
 
@@ -274,3 +276,26 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.product.name} - {self.order}"
+
+
+class Coordinate(models.Model):
+    address = models.CharField(
+        verbose_name='адрес места',
+        max_length=100
+    )
+
+    lng = models.FloatField(
+        verbose_name='Долгота/Longitude',
+    )
+
+    lat = models.FloatField(
+        verbose_name='Широта/Latitude',
+    )
+
+    class Meta:
+        db_table = 'coordinate'
+        verbose_name = 'координаты'
+        verbose_name_plural = 'координаты'
+
+    def __str__(self):
+        return self.address

@@ -1,18 +1,12 @@
 import requests
+from django.conf import settings
 from django.db import transaction
 from django.templatetags.static import static
-from environs import Env
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.serializers import ModelSerializer
 
 from .models import Coordinate, Order, OrderItem, Product
-
-env = Env()
-env.read_env()
-
-api_yandex_key = env('API_YANDEX_KEY')
-
 
 @api_view(['GET'])
 def banners_list_api(request):
@@ -107,7 +101,7 @@ def register_order(request):
 
     address = serializer.validated_data['address']
     lng, lat = fetch_coordinates(
-        apikey=api_yandex_key,
+        apikey=settings.API_YANDEX_KEY,
         address=address
         )
 

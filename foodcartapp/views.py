@@ -122,10 +122,12 @@ def register_order(request):
     for product_param in product_params:
         quantity = product_param.get('quantity')
         product = product_param.get('product')
+        price = product.price
         OrderItem.objects.create(
             product=product,
             quantity=quantity,
-            order=order
+            order=order,
+            price=price
         )
     serializer = OrderSerializer(order)
     return Response(serializer.data, status=200)

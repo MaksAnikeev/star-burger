@@ -59,7 +59,7 @@ pip install -r requirements.txt
 SECRET_KEY=django-insecure-0if40nf4nf93n4
 ```
 
-Для вычесления растояний между клиентом и различными ресторанами потребуется
+Для вычисления расстояний между клиентом и различными ресторанами потребуется
 `API_YANDEX_KEY`. Его можно получить на сайте [яндекс разработчика](https://developer.tech.yandex.ru/services/), а это
 [инструкция по получению ключа](https://dvmn.org/encyclopedia/api-docs/yandex-geocoder-api/). Полученный ключ необходимо записать в .env
 ```sh
@@ -154,6 +154,8 @@ Parcel будет следить за файлами в каталоге `bundle
 - `DEBUG` — дебаг-режим. Поставьте `False`.
 - `SECRET_KEY` — секретный ключ проекта. Он отвечает за шифрование на сайте. Например, им зашифрованы все пароли на вашем сайте.
 - `ALLOWED_HOSTS` — [см. документацию Django](https://docs.djangoproject.com/en/3.1/ref/settings/#allowed-hosts)
+- `API_YANDEX_KEY` - для вычисления расстояний между клиентом и различными ресторанами Его можно получить на сайте [яндекс разработчика](https://developer.tech.yandex.ru/services/), а это
+[инструкция по получению ключа](https://dvmn.org/encyclopedia/api-docs/yandex-geocoder-api/).
 
 ## Цели проекта
 

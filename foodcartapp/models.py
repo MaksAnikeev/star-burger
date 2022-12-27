@@ -282,15 +282,18 @@ class OrderItem(models.Model):
 class OrderCoordinate(models.Model):
     address = models.CharField(
         verbose_name='адрес места',
-        max_length=100
+        max_length=100,
+        unique=True
     )
 
     lng = models.FloatField(
         verbose_name='Долгота/Longitude',
+        blank=True,
     )
 
     lat = models.FloatField(
         verbose_name='Широта/Latitude',
+        blank=True,
     )
 
     class Meta:

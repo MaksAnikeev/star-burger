@@ -100,7 +100,7 @@ def get_restaurants_distance(restaurant):
 def view_orders(request):
     orders_params = []
     NEW = 'New'
-    orders = Order.objects.filter(order_status=NEW)
+    orders = Order.objects.filter(order_status=NEW).order_price()
     coordinates = OrderCoordinate.objects.all()
     for order in orders:
         restaurants_for_product = []
@@ -135,7 +135,8 @@ def view_orders(request):
         restaurants_for_order_distance_sorted = sorted(restaurants_for_order_distance,
                                                        key=get_restaurants_distance)
 
-        order_price = OrderItem.objects.filter(order=order.id).order_price()
+        # order_price = 1
+        # order_price = OrderItem.objects.filter(order=order.id).order_price()
 
         if order.restaurant:
             PROCESS = 'Process'
@@ -147,7 +148,7 @@ def view_orders(request):
                 'lastname': order.lastname,
                 'phonenumber': order.phonenumber,
                 'address': order.address,
-                'order_price': order_price,
+                'order_price': order.order_price,
                 'order_status': order.get_order_status_display(),
                 'comment': order.comment,
                 'payment': order.get_payment_display(),
@@ -161,7 +162,7 @@ def view_orders(request):
                 'lastname': order.lastname,
                 'phonenumber': order.phonenumber,
                 'address': order.address,
-                'order_price': order_price,
+                'order_price': order.order_price,
                 'order_status': order.get_order_status_display(),
                 'comment': order.comment,
                 'payment': order.get_payment_display(),

@@ -1,6 +1,6 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import F
+from django.db.models import F, Sum
 from django.utils import timezone
 from phonenumber_field.modelfields import PhoneNumberField
 
@@ -126,6 +126,12 @@ class RestaurantMenuItem(models.Model):
         return f"{self.restaurant.name} - {self.product.name}"
 
 
+class OrderQuerySet(models.QuerySet):
+    def order_price(self):
+        orders = self.annotate(order_price=Sum(F('order_items__price') * F('order_items__quantity')))
+        return orders
+
+
 class Order(models.Model):
     firstname = models.CharField(
         verbose_name='Имя',
@@ -221,6 +227,7 @@ class Order(models.Model):
         blank=True,
         null=True
     )
+    objects = OrderQuerySet.as_manager()
 
     class Meta:
         db_table = 'order'
@@ -229,15 +236,6 @@ class Order(models.Model):
 
     def __str__(self):
         return self.firstname
-
-
-class OrderItemQuerySet(models.QuerySet):
-    def order_price(self):
-        order_items = self.annotate(item_price=F('price') * F('quantity'))
-        order_price = 0
-        for order_item in order_items:
-            order_price += order_item.item_price
-        return order_price
 
 
 class OrderItem(models.Model):
@@ -266,8 +264,6 @@ class OrderItem(models.Model):
         decimal_places=2,
         validators=[MinValueValidator(0)],
     )
-
-    objects = OrderItemQuerySet.as_manager()
 
     class Meta:
         db_table = 'order_items'

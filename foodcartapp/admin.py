@@ -5,7 +5,7 @@ from django.templatetags.static import static
 from django.utils.html import format_html
 from django.utils.http import url_has_allowed_host_and_scheme
 
-from .models import (Coordinate, Order, OrderItem, Product, ProductCategory,
+from .models import (OrderCoordinate, Order, OrderItem, Product, ProductCategory,
                      Restaurant, RestaurantMenuItem)
 
 
@@ -173,8 +173,8 @@ class OrderAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(Coordinate)
-class CoordinateAdmin(admin.ModelAdmin):
+@admin.register(OrderCoordinate)
+class OrderCoordinateAdmin(admin.ModelAdmin):
     list_display = [
         'id',
         'address'

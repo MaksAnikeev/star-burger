@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 from django.views import View
 from geopy import distance
 
-from foodcartapp.models import (Coordinate, Order, OrderItem, Product,
+from foodcartapp.models import (OrderCoordinate, Order, OrderItem, Product,
                                 Restaurant, RestaurantMenuItem)
 
 
@@ -101,7 +101,7 @@ def view_orders(request):
     orders_params = []
     NEW = 'New'
     orders = Order.objects.filter(order_status=NEW)
-    coordinates = Coordinate.objects.all()
+    coordinates = OrderCoordinate.objects.all()
     for order in orders:
         restaurants_for_product = []
         restaurant_menu = RestaurantMenuItem.objects.prefetch_related('restaurant')

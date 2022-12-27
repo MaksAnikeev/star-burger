@@ -279,7 +279,7 @@ class OrderItem(models.Model):
         return f"{self.product.name} - {self.order}"
 
 
-class Coordinate(models.Model):
+class OrderCoordinate(models.Model):
     address = models.CharField(
         verbose_name='адрес места',
         max_length=100

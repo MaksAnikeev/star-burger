@@ -6,7 +6,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.serializers import ModelSerializer
 
-from .models import Coordinate, Order, OrderItem, Product
+from .models import OrderCoordinate, Order, OrderItem, Product
 
 @api_view(['GET'])
 def banners_list_api(request):
@@ -75,7 +75,7 @@ class OrderSerializer(ModelSerializer):
                   'phonenumber', 'address', 'products']
 
 
-def fetch_coordinates(apikey, address):
+def fetch_coordinates_order(apikey, address):
     base_url = "https://geocode-maps.yandex.ru/1.x"
     response = requests.get(base_url, params={
         "geocode": address,
@@ -100,12 +100,12 @@ def register_order(request):
     serializer.is_valid(raise_exception=True)
 
     address = serializer.validated_data['address']
-    lng, lat = fetch_coordinates(
+    lng, lat = fetch_coordinates_order(
         apikey=settings.API_YANDEX_KEY,
         address=address
         )
 
-    Coordinate.objects.get_or_create(
+    OrderCoordinate.objects.get_or_create(
         address=address,
         lng=lng,
         lat=lat

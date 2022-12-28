@@ -179,9 +179,7 @@ class Order(models.Model):
 
     comment = models.TextField(
         verbose_name='комментарий к заказу',
-        default='',
         blank=True,
-        null=True,
     )
 
     order_status = models.CharField(

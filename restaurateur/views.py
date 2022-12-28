@@ -150,7 +150,7 @@ def view_orders(request):
                 'order_status': order.get_order_status_display(),
                 'comment': order.comment,
                 'payment': order.get_method_payment_display(),
-                'restaurant': order.restaurant
+                'restaurant': order.order_restaurant
             }
             orders_params.append(order_params)
         else:

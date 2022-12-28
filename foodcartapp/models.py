@@ -133,6 +133,26 @@ class OrderQuerySet(models.QuerySet):
 
 
 class Order(models.Model):
+    NEW = 'New'
+    PROCESS = 'Process'
+    GO = 'Go'
+    DONE = 'Done'
+
+    RIGHT_NOW = 'right_now'
+    DELIVERY_CASH = 'delivery_pay_cash'
+
+    STATUS_ORDER = (
+        (NEW, 'Необработанный'),
+        (PROCESS, 'Собираем'),
+        (GO, 'Доставка'),
+        (DONE, 'Выполнен'),
+    )
+
+    METHOD_PAYMENT = (
+        (RIGHT_NOW, 'Электронно'),
+        (DELIVERY_CASH, 'Наличностью при доставке'),
+    )
+
     firstname = models.CharField(
         verbose_name='Имя',
         max_length=50,
@@ -164,17 +184,6 @@ class Order(models.Model):
         null=True,
     )
 
-    NEW = 'New'
-    PROCESS = 'Process'
-    GO = 'Go'
-    DONE = 'Done'
-    STATUS_ORDER = (
-        (NEW, 'Необработанный'),
-        (PROCESS, 'Собираем'),
-        (GO, 'Доставка'),
-        (DONE, 'Выполнен'),
-        )
-
     order_status = models.CharField(
         verbose_name='статус заказа',
         max_length=7,
@@ -182,14 +191,6 @@ class Order(models.Model):
         default=NEW,
         db_index=True
         )
-
-    RIGHT_NOW = 'right_now'
-    DELIVERY_CASH = 'delivery_pay_cash'
-
-    METHOD_PAYMENT = (
-        (RIGHT_NOW, 'Электронно'),
-        (DELIVERY_CASH, 'Наличностью при доставке'),
-    )
 
     method_payment = models.CharField(
         verbose_name='способ оплаты',

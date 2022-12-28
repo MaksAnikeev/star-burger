@@ -119,15 +119,14 @@ def register_order(request):
         )
 
     product_params = serializer.validated_data['products']
-    for product_param in product_params:
-        quantity = product_param.get('quantity')
-        product = product_param.get('product')
-        price = product.price
-        OrderItem.objects.create(
-            product=product,
-            quantity=quantity,
+    OrderItem.objects.bulk_create([
+        OrderItem(
+            product=product_param.get('product'),
+            quantity=product_param.get('quantity'),
             order=order,
-            price=price
+            price=product_param.get('product').price
         )
+        for product_param in product_params])
+
     serializer = OrderSerializer(order)
     return Response(serializer.data, status=200)

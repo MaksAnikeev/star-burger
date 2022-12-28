@@ -149,7 +149,7 @@ def view_orders(request):
                 'order_price': order.order_price,
                 'order_status': order.get_order_status_display(),
                 'comment': order.comment,
-                'payment': order.get_payment_display(),
+                'payment': order.get_method_payment_display(),
                 'restaurant': order.restaurant
             }
             orders_params.append(order_params)
@@ -163,7 +163,7 @@ def view_orders(request):
                 'order_price': order.order_price,
                 'order_status': order.get_order_status_display(),
                 'comment': order.comment,
-                'payment': order.get_payment_display(),
+                'payment': order.get_method_payment_display(),
                 'restaurants': restaurants_for_order_distance_sorted
                 }
             orders_params.append(order_params)

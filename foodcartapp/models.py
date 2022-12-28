@@ -200,19 +200,19 @@ class Order(models.Model):
         db_index=True
         )
 
-    registrated = models.DateTimeField(
+    registrated_at = models.DateTimeField(
         verbose_name='время создания заказа',
         default=timezone.now
     )
 
-    called = models.DateTimeField(
+    called_at = models.DateTimeField(
         verbose_name='дата звонка',
         null=True,
         blank=True,
         db_index=True
     )
 
-    delivered = models.DateTimeField(
+    delivered_at = models.DateTimeField(
         verbose_name='дата доставки',
         null=True,
         blank=True,

@@ -100,16 +100,22 @@ def register_order(request):
     serializer.is_valid(raise_exception=True)
 
     address = serializer.validated_data['address']
-    lng, lat = fetch_coordinates_order(
-        apikey=settings.API_YANDEX_KEY,
-        address=address
-        )
 
-    OrderCoordinate.objects.get_or_create(
-        address=address,
-        lng=lng,
-        lat=lat
-        )
+    try:
+        lng, lat = fetch_coordinates_order(
+            apikey=settings.API_YANDEX_KEY,
+            address=address
+            )
+        print(lng, lat)
+
+        OrderCoordinate.objects.get_or_create(
+            address=address,
+            lng=lng,
+            lat=lat
+            )
+
+    except:
+        pass
 
     order = Order.objects.create(
         address=address,

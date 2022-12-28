@@ -115,25 +115,30 @@ def view_orders(request):
         for restaurant in restaurants_for_product:
             restaurants_join = list(set(restaurants_for_order) & set(restaurant))
             restaurants_for_order = restaurants_join
+        try:
+            coordinate_client = coordinates.get(address=order.address)
+            client_coordinates = (coordinate_client.lng, coordinate_client.lat)
 
-        coordinate_client = coordinates.get(address=order.address)
-        client_coordinates = (coordinate_client.lng, coordinate_client.lat)
+            restaurants_for_order_distance = []
+            for restaurant in restaurants_for_order:
+                restaurant_params = Restaurant.objects.get(name=restaurant)
+                restaurant_address = restaurant_params.address
+                coordinate_restaurant = coordinates.get(address=restaurant_address)
+                restaurant_coordinates = (coordinate_restaurant.lng, coordinate_restaurant.lat)
+                restaurant_distance = round(distance.distance(client_coordinates,
+                                                              restaurant_coordinates).km, 2)
+                restaurant_distance_params = {
+                    'name': restaurant,
+                    'distance': restaurant_distance}
+                restaurants_for_order_distance.append(restaurant_distance_params)
 
-        restaurants_for_order_distance = []
-        for restaurant in restaurants_for_order:
-            restaurant_params = Restaurant.objects.get(name=restaurant)
-            restaurant_address = restaurant_params.address
-            coordinate_restaurant = coordinates.get(address=restaurant_address)
-            restaurant_coordinates = (coordinate_restaurant.lng, coordinate_restaurant.lat)
-            restaurant_distance = round(distance.distance(client_coordinates,
-                                                          restaurant_coordinates).km, 2)
-            restaurant_distance_params = {
-                'name': restaurant,
-                'distance': restaurant_distance}
-            restaurants_for_order_distance.append(restaurant_distance_params)
+            restaurants_for_order_distance_sorted = sorted(restaurants_for_order_distance,
+                                                           key=get_restaurants_distance)
+        except:
+            restaurants_for_order_distance_sorted = [{
+                    'name': 'адрес клиента не распознан',
+                    'distance': 0}]
 
-        restaurants_for_order_distance_sorted = sorted(restaurants_for_order_distance,
-                                                       key=get_restaurants_distance)
 
 
         if order.order_restaurant:

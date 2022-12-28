@@ -135,10 +135,8 @@ def view_orders(request):
         restaurants_for_order_distance_sorted = sorted(restaurants_for_order_distance,
                                                        key=get_restaurants_distance)
 
-        # order_price = 1
-        # order_price = OrderItem.objects.filter(order=order.id).order_price()
 
-        if order.restaurant:
+        if order.order_restaurant:
             PROCESS = 'Process'
             order.order_status = PROCESS
             order.save()

@@ -106,7 +106,6 @@ def register_order(request):
             apikey=settings.YANDEX_API_KEY,
             address=address
             )
-        print(lng, lat)
 
         OrderCoordinate.objects.get_or_create(
             address=address,

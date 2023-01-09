@@ -120,6 +120,10 @@ def register_order(request):
         logging.error(err)
         pass
 
+    except TypeError as err:
+        logging.error(err)
+        pass
+
     order = Order.objects.create(
         address=address,
         firstname=serializer.validated_data['firstname'],

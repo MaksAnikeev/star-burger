@@ -103,7 +103,7 @@ def register_order(request):
 
     try:
         lng, lat = fetch_coordinates_order(
-            apikey=settings.API_YANDEX_KEY,
+            apikey=settings.YANDEX_API_KEY,
             address=address
             )
         print(lng, lat)

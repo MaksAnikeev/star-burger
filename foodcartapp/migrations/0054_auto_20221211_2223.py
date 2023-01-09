@@ -5,7 +5,7 @@ from environs import Env
 env = Env()
 env.read_env()
 
-api_yandex_key = env('API_YANDEX_KEY')
+yandex_api_key = env('YANDEX_API_KEY')
 from django.db import migrations
 
 def fetch_coordinates(apikey, address):
@@ -32,7 +32,7 @@ def create_coordinate(apps, schema_editor):
         address = restaurant.address
         try:
             lng, lat = fetch_coordinates(
-                apikey=api_yandex_key,
+                apikey=yandex_api_key,
                 address=address)
 
             Coordinate.objects.get_or_create(

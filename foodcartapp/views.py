@@ -1,3 +1,4 @@
+import logging
 import requests
 from django.conf import settings
 from django.db import transaction
@@ -7,6 +8,8 @@ from rest_framework.response import Response
 from rest_framework.serializers import ModelSerializer
 
 from .models import OrderCoordinate, Order, OrderItem, Product
+
+logging.basicConfig(format="%(process)d %(levelname)s %(message)s")
 
 @api_view(['GET'])
 def banners_list_api(request):
@@ -113,7 +116,8 @@ def register_order(request):
             lat=lat
             )
 
-    except:
+    except requests.exceptions.HTTPError as err:
+        logging.error(err)
         pass
 
     order = Order.objects.create(

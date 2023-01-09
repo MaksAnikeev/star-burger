@@ -9,8 +9,6 @@ from rest_framework.serializers import ModelSerializer
 
 from .models import OrderCoordinate, Order, OrderItem, Product
 
-logging.basicConfig(format="%(process)d %(levelname)s %(message)s")
-
 @api_view(['GET'])
 def banners_list_api(request):
     # FIXME move data to db?
@@ -99,6 +97,12 @@ def fetch_coordinates_order(apikey, address):
 @transaction.atomic
 @api_view(['POST'])
 def register_order(request):
+
+    logging.basicConfig(
+        format="%(process)d %(levelname)s %(message)s",
+        level=logging.INFO
+    )
+
     serializer = OrderSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 

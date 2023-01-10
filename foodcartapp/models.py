@@ -219,7 +219,7 @@ class Order(models.Model):
         db_index=True
     )
 
-    order_restaurant = models.ForeignKey(
+    restaurant_order = models.ForeignKey(
         Restaurant,
         related_name='orders',
         verbose_name="ресторан для заказа",

@@ -163,7 +163,7 @@ def view_orders(request):
                     'name': 'адрес клиента не распознан',
                     'distance': 0}]
 
-        if order.order_restaurant:
+        if order.restaurant_order:
             PROCESS = 'Process'
             order.order_status = PROCESS
             order.save()
@@ -177,7 +177,7 @@ def view_orders(request):
                 'order_status': order.get_order_status_display(),
                 'comment': order.comment,
                 'payment': order.get_method_payment_display(),
-                'restaurant': order.order_restaurant
+                'restaurant': order.restaurant_order
             }
             orders_params.append(order_params)
         else:

@@ -164,36 +164,29 @@ def view_orders(request):
                     'distance': 0}]
 
         if order.restaurant_order:
+            restaurant = order.restaurant_order
+            restaurants = None
             PROCESS = 'Process'
             order.order_status = PROCESS
             order.save()
-            order_params = {
-                'id': order.id,
-                'firstname': order.firstname,
-                'lastname': order.lastname,
-                'phonenumber': order.phonenumber,
-                'address': order.address,
-                'order_price': order.order_price,
-                'order_status': order.get_order_status_display(),
-                'comment': order.comment,
-                'payment': order.get_method_payment_display(),
-                'restaurant': order.restaurant_order
-            }
-            orders_params.append(order_params)
         else:
-            order_params = {
-                'id': order.id,
-                'firstname': order.firstname,
-                'lastname': order.lastname,
-                'phonenumber': order.phonenumber,
-                'address': order.address,
-                'order_price': order.order_price,
-                'order_status': order.get_order_status_display(),
-                'comment': order.comment,
-                'payment': order.get_method_payment_display(),
-                'restaurants': restaurants_for_order_distance_sorted
-                }
-            orders_params.append(order_params)
+            restaurant = None
+            restaurants = restaurants_for_order_distance_sorted
+
+        order_params = {
+            'id': order.id,
+            'firstname': order.firstname,
+            'lastname': order.lastname,
+            'phonenumber': order.phonenumber,
+            'address': order.address,
+            'order_price': order.order_price,
+            'order_status': order.get_order_status_display(),
+            'comment': order.comment,
+            'payment': order.get_method_payment_display(),
+            'restaurant': restaurant,
+            'restaurants': restaurants,
+        }
+        orders_params.append(order_params)
 
     context = {'order_params': orders_params}
     return render(request, template_name='order_items.html', context=context)

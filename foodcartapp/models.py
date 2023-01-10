@@ -140,6 +140,7 @@ class Order(models.Model):
 
     RIGHT_NOW = 'right_now'
     DELIVERY_CASH = 'delivery_pay_cash'
+    INFO = 'check_to_manager'
 
     STATUS_ORDER = (
         (NEW, 'Необработанный'),
@@ -151,6 +152,7 @@ class Order(models.Model):
     METHOD_PAYMENT = (
         (RIGHT_NOW, 'Электронно'),
         (DELIVERY_CASH, 'Наличностью при доставке'),
+        (INFO, 'Уточнить у менеджера'),
     )
 
     firstname = models.CharField(
@@ -194,7 +196,7 @@ class Order(models.Model):
         verbose_name='способ оплаты',
         max_length=17,
         choices=METHOD_PAYMENT,
-        default=DELIVERY_CASH,
+        default=INFO,
         db_index=True
         )
 

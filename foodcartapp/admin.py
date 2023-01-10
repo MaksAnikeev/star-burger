@@ -5,8 +5,9 @@ from django.templatetags.static import static
 from django.utils.html import format_html
 from django.utils.http import url_has_allowed_host_and_scheme
 
-from .models import (OrderCoordinate, Order, OrderItem, Product, ProductCategory,
+from .models import (Order, OrderItem, Product, ProductCategory,
                      Restaurant, RestaurantMenuItem)
+from restaurateur.models import (OrderCoordinate)
 
 
 class RestaurantMenuItemInline(admin.TabularInline):

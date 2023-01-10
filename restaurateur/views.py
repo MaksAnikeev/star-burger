@@ -128,7 +128,7 @@ def view_orders(request):
     for order in orders:
         restaurants_for_product = []
         restaurant_menu = RestaurantMenuItem.objects.prefetch_related('restaurant')
-        order_items = order.order_items.all().prefetch_related('product')
+        order_items = order.items.all().prefetch_related('product')
         for order_item in order_items:
             restaurants = restaurant_menu.filter(product=order_item.product)
             restaurants_names = [restaurant.restaurant.name for restaurant in restaurants]

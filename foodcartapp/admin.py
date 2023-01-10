@@ -153,7 +153,7 @@ class OrderAdmin(admin.ModelAdmin):
 
     def order_price(self, obj):
         order_price = 0
-        for order_item in obj.order_items.all():
+        for order_item in obj.items.all():
             if order_item.quantity and order_item.price:
                 item_sum = order_item.quantity * order_item.price
                 order_price += item_sum

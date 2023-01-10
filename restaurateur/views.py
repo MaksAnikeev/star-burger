@@ -123,7 +123,7 @@ def get_restaurants_distance(restaurant):
 def view_orders(request):
     orders_params = []
     NEW = 'raw_order'
-    orders = Order.objects.filter(order_status=NEW).order_price()
+    orders = Order.objects.filter(order_status=NEW).add_order_price()
     coordinates = OrderCoordinate.objects.all()
     for order in orders:
         restaurants_for_product = []

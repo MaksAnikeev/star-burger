@@ -122,7 +122,7 @@ def get_restaurants_distance(restaurant):
 @user_passes_test(is_manager, login_url='restaurateur:login')
 def view_orders(request):
     orders_params = []
-    NEW = 'New'
+    NEW = 'raw_order'
     orders = Order.objects.filter(order_status=NEW).order_price()
     coordinates = OrderCoordinate.objects.all()
     for order in orders:
@@ -166,7 +166,7 @@ def view_orders(request):
         if order.restaurant_order:
             restaurant = order.restaurant_order
             restaurants = None
-            PROCESS = 'Process'
+            PROCESS = 'collecting_order'
             order.order_status = PROCESS
             order.save()
         else:

@@ -133,10 +133,10 @@ class OrderQuerySet(models.QuerySet):
 
 
 class Order(models.Model):
-    NEW = 'New'
-    PROCESS = 'Process'
-    GO = 'Go'
-    DONE = 'Done'
+    NEW = 'raw_order'
+    PROCESS = 'collecting_order'
+    GO = 'go'
+    DONE = 'done'
 
     RIGHT_NOW = 'right_now'
     DELIVERY_CASH = 'delivery_pay_cash'
@@ -186,7 +186,7 @@ class Order(models.Model):
 
     order_status = models.CharField(
         verbose_name='статус заказа',
-        max_length=7,
+        max_length=17,
         choices=STATUS_ORDER,
         default=NEW,
         db_index=True

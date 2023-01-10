@@ -161,11 +161,14 @@ class OrderAdmin(admin.ModelAdmin):
 
     def response_post_save_change(self, request, obj):
         res = super().response_post_save_change(request, obj)
+        # if "next" in request.GET or url_has_allowed_host_and_scheme(request.GET['next'], None):
+        #     return HttpResponseRedirect(request.GET['next'])
+        # else:
+        #     return res
+
         if "next" in request.GET:
             if url_has_allowed_host_and_scheme(request.GET['next'], None):
                 return HttpResponseRedirect(request.GET['next'])
-            else:
-                return res
         else:
             return res
 

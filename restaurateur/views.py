@@ -121,9 +121,19 @@ def get_restaurants_distance(restaurant):
 
 @user_passes_test(is_manager, login_url='restaurateur:login')
 def view_orders(request):
+    orders_restaurants_address = []
+    restaurants = Restaurant.objects.all()
+    for restaurant in restaurants:
+        orders_restaurants_address.append(restaurant.address)
+
     orders_params = []
     NEW = 'raw_order'
     orders = Order.objects.filter(order_status=NEW).add_order_price()
+    for order in orders:
+        orders_restaurants_address.append(order.address)
+
+    coordinates = OrderCoordinate.objects.filter(address__in=orders_restaurants_address)
+
     for order in orders:
         restaurants_for_product = []
         restaurant_menu = RestaurantMenuItem.objects.prefetch_related('restaurant')
@@ -138,14 +148,14 @@ def view_orders(request):
             restaurants_join = list(set(restaurants_for_order) & set(restaurant))
             restaurants_for_order = restaurants_join
         try:
-            coordinate_client = OrderCoordinate.objects.get(address=order.address)
+            coordinate_client = coordinates.get(address=order.address)
             client_coordinates = (coordinate_client.lng, coordinate_client.lat)
 
             restaurants_for_order_distance = []
             for restaurant in restaurants_for_order:
                 restaurant_params = Restaurant.objects.get(name=restaurant)
                 restaurant_address = restaurant_params.address
-                coordinate_restaurant = OrderCoordinate.objects.get(address=restaurant_address)
+                coordinate_restaurant = coordinates.get(address=restaurant_address)
                 restaurant_coordinates = (coordinate_restaurant.lng,
                                           coordinate_restaurant.lat)
                 restaurant_distance = round(distance.distance(client_coordinates,

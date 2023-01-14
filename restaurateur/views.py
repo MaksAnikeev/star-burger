@@ -169,8 +169,8 @@ def view_orders(request):
                     'name': 'адрес клиента не распознан',
                     'distance': 0}]
 
-        if order.restaurant_order:
-            restaurant = order.restaurant_order
+        if order.restaurant_for_order:
+            restaurant = order.restaurant_for_order
             restaurants = None
             PROCESS = 'collecting_order'
             order.order_status = PROCESS

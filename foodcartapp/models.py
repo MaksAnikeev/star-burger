@@ -219,7 +219,7 @@ class Order(models.Model):
         db_index=True
     )
 
-    restaurant_order = models.ForeignKey(
+    restaurant_for_order = models.ForeignKey(
         Restaurant,
         related_name='orders',
         verbose_name="ресторан для заказа",
@@ -256,7 +256,7 @@ class OrderItem(models.Model):
 
     quantity = models.IntegerField(
         verbose_name='количество',
-        validators=[MinValueValidator(0), MaxValueValidator(10)]
+        validators=[MinValueValidator(1), MaxValueValidator(10)]
     )
 
     price = models.DecimalField(

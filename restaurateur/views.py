@@ -125,7 +125,7 @@ def view_orders(request):
 
     orders_params = []
     NEW = 'raw_order'
-    orders = Order.objects.filter(order_status=NEW).add_order_price()
+    orders = Order.objects.filter(order_status=NEW).add_orders_price()
     for order in orders:
         orders_restaurants_address.append(order.address)
 

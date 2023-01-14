@@ -165,7 +165,6 @@ class Order(models.Model):
         verbose_name='Фамилия',
         max_length=50,
         blank=True,
-        default='',
         db_index=True
     )
 

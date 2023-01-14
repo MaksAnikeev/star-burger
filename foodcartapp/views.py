@@ -9,7 +9,7 @@ from rest_framework.serializers import ModelSerializer
 
 from .models import Order, OrderItem, Product
 from restaurateur.models import OrderCoordinate
-from restaurateur.views import fetch_coordinates_order
+from restaurateur.views import fetch_coordinates_order, AddressFormatError
 
 @api_view(['GET'])
 def banners_list_api(request):
@@ -113,7 +113,7 @@ def register_order(request):
             logging.error(err)
             pass
 
-        except TypeError as err:
+        except AddressFormatError as err:
             logging.error(err)
             pass
 

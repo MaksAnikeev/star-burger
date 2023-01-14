@@ -63,6 +63,11 @@ class LogoutView(auth_views.LogoutView):
     next_page = reverse_lazy('restaurateur:login')
 
 
+class AddressFormatError(TypeError):
+    def __init__(self, text):
+        self.txt = text
+
+
 def is_manager(user):
     return user.is_staff  # FIXME replace with specific permission
 
@@ -79,7 +84,7 @@ def fetch_coordinates_order(apikey, address):
     found_places = response.json()['response']['GeoObjectCollection']['featureMember']
 
     if not found_places:
-        return None
+        raise AddressFormatError('Невозможно распознать адрес. Введен некорректный адрес')
 
     most_relevant = found_places[0]
     lng, lat = most_relevant['GeoObject']['Point']['pos'].split(" ")
@@ -124,8 +129,8 @@ def view_orders(request):
     orders_restaurants_address = [restaurant.address for restaurant in Restaurant.objects.all()]
 
     orders_params = []
-    NEW = 'raw_order'
-    orders = Order.objects.filter(order_status=NEW).add_orders_price()
+    # NEW = 'raw_order'
+    orders = Order.objects.filter(order_status='raw_order').add_orders_price()
     for order in orders:
         orders_restaurants_address.append(order.address)
 

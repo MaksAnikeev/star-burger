@@ -169,7 +169,8 @@ class Order(models.Model):
         db_index=True
     )
 
-    address = models.TextField(
+    address = models.CharField(
+        max_length=100,
         verbose_name='адрес'
     )
 

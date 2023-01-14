@@ -150,6 +150,7 @@ class OrderAdmin(admin.ModelAdmin):
     ]
     ordering = ['id']
     readonly_fields = ['order_price']
+    inlines = [OrderItemInline]
 
     def order_price(self, obj):
         order_price = 0
@@ -166,10 +167,6 @@ class OrderAdmin(admin.ModelAdmin):
                 return HttpResponseRedirect(request.GET['next'])
         else:
             return res
-
-    inlines = [
-        OrderItemInline
-    ]
 
 
 @admin.register(OrderCoordinate)

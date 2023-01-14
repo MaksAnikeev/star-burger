@@ -121,10 +121,7 @@ def get_restaurants_distance(restaurant):
 
 @user_passes_test(is_manager, login_url='restaurateur:login')
 def view_orders(request):
-    orders_restaurants_address = []
-    restaurants = Restaurant.objects.all()
-    for restaurant in restaurants:
-        orders_restaurants_address.append(restaurant.address)
+    orders_restaurants_address = [restaurant.address for restaurant in Restaurant.objects.all()]
 
     orders_params = []
     NEW = 'raw_order'

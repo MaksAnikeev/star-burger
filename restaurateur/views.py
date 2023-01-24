@@ -148,6 +148,7 @@ def view_orders(request):
         for restaurant in restaurants_for_product:
             restaurants_join = list(set(restaurants_for_order) & set(restaurant))
             restaurants_for_order = restaurants_join
+
         try:
             coordinate_client = coordinates.get(address=order.address)
             client_coordinates = (coordinate_client.lng, coordinate_client.lat)
@@ -168,7 +169,7 @@ def view_orders(request):
 
             restaurants_for_order_distance_sorted = sorted(restaurants_for_order_distance,
                                                            key=get_restaurants_distance)
-        except:
+        except OrderCoordinate.DoesNotExist:
             restaurants_for_order_distance_sorted = [{
                     'name': 'адрес клиента не распознан',
                     'distance': 0}]
@@ -176,8 +177,7 @@ def view_orders(request):
         if order.restaurant_for_order:
             restaurant = order.restaurant_for_order
             restaurants = None
-            PROCESS = 'collecting_order'
-            order.order_status = PROCESS
+            order.order_status = 'collecting_order'
             order.save()
         else:
             restaurant = None

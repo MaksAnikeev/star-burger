@@ -10,10 +10,10 @@ from django.views import View
 from geopy import distance
 
 from foodcartapp.models import (Order, Product,
-                                Restaurant, RestaurantMenuItem)
+                                Restaurant, RestaurantMenuItem, OrderItem)
 
 from .models import (OrderCoordinate)
-
+from pprint import pprint
 
 class Login(forms.Form):
     username = forms.CharField(
@@ -129,20 +129,33 @@ def view_orders(request):
     orders_restaurants_address = [restaurant.address for restaurant in Restaurant.objects.all()]
 
     orders_params = []
+
+    # Первый способ уменьшения запросов:
+    # orders = Order.objects.filter(order_status='raw_order').add_orders_price().prefetch_related('items__product')
     orders = Order.objects.filter(order_status='raw_order').add_orders_price()
+
     for order in orders:
         orders_restaurants_address.append(order.address)
 
     coordinates = OrderCoordinate.objects.filter(address__in=orders_restaurants_address)
+    restaurant_menu = RestaurantMenuItem.objects.prefetch_related('restaurant').prefetch_related('product')
+    restaurants_params = Restaurant.objects.all()
+
+    # Второй способ уменьшения запросов:
+    # order_items = OrderItem.objects.filter(order__in=orders).prefetch_related('product').prefetch_related('order')
+    # Третий способ уменьшения запросов:
+    order_items = OrderItem.objects.filter(order__order_status='raw_order'
+                                           ).prefetch_related('product').prefetch_related('order')
 
     for order in orders:
         restaurants_for_product = []
-        restaurant_menu = RestaurantMenuItem.objects.prefetch_related('restaurant')
-        order_items = order.items.all().prefetch_related('product')
         for order_item in order_items:
-            restaurants = restaurant_menu.filter(product=order_item.product)
-            restaurants_names = [restaurant.restaurant.name for restaurant in restaurants]
-            restaurants_for_product.append(restaurants_names)
+            if order_item.order.id == order.id:
+                restaurants_for_item = []
+                for product in restaurant_menu:
+                    if product.product.id == order_item.product.id:
+                        restaurants_for_item.append(product.restaurant.name)
+                restaurants_for_product.append(restaurants_for_item)
 
         restaurants_for_order = restaurants_for_product[0]
         for restaurant in restaurants_for_product:
@@ -150,22 +163,26 @@ def view_orders(request):
             restaurants_for_order = restaurants_join
 
         try:
-            coordinate_client = coordinates.get(address=order.address)
-            client_coordinates = (coordinate_client.lng, coordinate_client.lat)
+
+            for coordinate_client in coordinates:
+                if coordinate_client.address == order.address:
+                    client_coordinates = (coordinate_client.lng, coordinate_client.lat)
 
             restaurants_for_order_distance = []
             for restaurant in restaurants_for_order:
-                restaurant_params = Restaurant.objects.get(name=restaurant)
-                restaurant_address = restaurant_params.address
-                coordinate_restaurant = coordinates.get(address=restaurant_address)
-                restaurant_coordinates = (coordinate_restaurant.lng,
-                                          coordinate_restaurant.lat)
-                restaurant_distance = round(distance.distance(client_coordinates,
-                                                              restaurant_coordinates).km, 2)
-                restaurant_distance_params = {
-                    'name': restaurant,
-                    'distance': restaurant_distance}
-                restaurants_for_order_distance.append(restaurant_distance_params)
+                for restaurant_params in restaurants_params:
+                    if restaurant_params.name == restaurant:
+                        restaurant_address = restaurant_params.address
+                        for coordinate_restaurant in coordinates:
+                            if coordinate_restaurant.address == restaurant_address:
+                                restaurant_coordinates = (coordinate_restaurant.lng,
+                                                          coordinate_restaurant.lat)
+                                restaurant_distance = round(distance.distance(client_coordinates,
+                                                                              restaurant_coordinates).km, 2)
+                                restaurant_distance_params = {
+                                    'name': restaurant,
+                                    'distance': restaurant_distance}
+                                restaurants_for_order_distance.append(restaurant_distance_params)
 
             restaurants_for_order_distance_sorted = sorted(restaurants_for_order_distance,
                                                            key=get_restaurants_distance)

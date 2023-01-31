@@ -153,18 +153,13 @@ class OrderAdmin(admin.ModelAdmin):
     readonly_fields = ['order_price']
     inlines = [OrderItemInline]
 
-    def order_price(self, obj):
-        # orders = obj.items.all().annotate(order_price=F('price')*F('quantity'))
-        # order_price = sum([int(order.order_price) for order in orders])
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        queryset = queryset.annotate(order_price=Sum(F('items__price') * F('items__quantity')))
+        return queryset
 
-        order = obj.objects.annotate(order_price=F('firstname') * 3)
-        print(order)
-        # order_price = 0
-        # for order_item in obj.items.all():
-        #     if order_item.quantity and order_item.price:
-        #         item_sum = order_item.quantity * order_item.price
-        #         order_price += item_sum
-        return order.order_price
+    def order_price(self, obj):
+        return obj.order_price
 
     def response_post_save_change(self, request, obj):
         res = super().response_post_save_change(request, obj)

@@ -8,12 +8,10 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views import View
 from geopy import distance
-
 from foodcartapp.models import (Order, Product,
                                 Restaurant, RestaurantMenuItem, OrderItem)
-
 from .models import (OrderCoordinate)
-from pprint import pprint
+
 
 class Login(forms.Form):
     username = forms.CharField(
@@ -130,8 +128,6 @@ def view_orders(request):
 
     orders_params = []
 
-    # Первый способ уменьшения запросов:
-    # orders = Order.objects.filter(order_status='raw_order').add_orders_price().prefetch_related('items__product')
     orders = Order.objects.filter(order_status='raw_order').add_orders_price()
 
     for order in orders:
@@ -141,9 +137,6 @@ def view_orders(request):
     restaurant_menu = RestaurantMenuItem.objects.prefetch_related('restaurant').prefetch_related('product')
     restaurants_params = Restaurant.objects.all()
 
-    # Второй способ уменьшения запросов:
-    # order_items = OrderItem.objects.filter(order__in=orders).prefetch_related('product').prefetch_related('order')
-    # Третий способ уменьшения запросов:
     order_items = OrderItem.objects.filter(order__order_status='raw_order'
                                            ).prefetch_related('product').prefetch_related('order')
 

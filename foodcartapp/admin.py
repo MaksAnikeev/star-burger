@@ -1,3 +1,4 @@
+from django.db.models import F, Sum, Count
 from django.contrib import admin
 from django.http import HttpResponseRedirect
 from django.shortcuts import reverse
@@ -6,7 +7,7 @@ from django.utils.html import format_html
 from django.utils.http import url_has_allowed_host_and_scheme
 
 from .models import (Order, OrderItem, Product, ProductCategory,
-                     Restaurant, RestaurantMenuItem)
+                     Restaurant, RestaurantMenuItem,)
 from restaurateur.models import (OrderCoordinate)
 
 
@@ -153,12 +154,17 @@ class OrderAdmin(admin.ModelAdmin):
     inlines = [OrderItemInline]
 
     def order_price(self, obj):
-        order_price = 0
-        for order_item in obj.items.all():
-            if order_item.quantity and order_item.price:
-                item_sum = order_item.quantity * order_item.price
-                order_price += item_sum
-        return order_price
+        # orders = obj.items.all().annotate(order_price=F('price')*F('quantity'))
+        # order_price = sum([int(order.order_price) for order in orders])
+
+        order = obj.objects.annotate(order_price=F('firstname') * 3)
+        print(order)
+        # order_price = 0
+        # for order_item in obj.items.all():
+        #     if order_item.quantity and order_item.price:
+        #         item_sum = order_item.quantity * order_item.price
+        #         order_price += item_sum
+        return order.order_price
 
     def response_post_save_change(self, request, obj):
         res = super().response_post_save_change(request, obj)

@@ -11,6 +11,14 @@ from .models import Order, OrderItem, Product
 from restaurateur.models import OrderCoordinate
 from restaurateur.views import fetch_coordinates_order, AddressFormatError
 
+
+logger = logging.getLogger(__file__)
+logging.basicConfig(
+        format="%(process)d %(levelname)s %(message)s",
+        level=logging.INFO
+    )
+
+
 @api_view(['GET'])
 def banners_list_api(request):
     # FIXME move data to db?
@@ -81,11 +89,6 @@ class OrderSerializer(ModelSerializer):
 @transaction.atomic
 @api_view(['POST'])
 def register_order(request):
-
-    logging.basicConfig(
-        format="%(process)d %(levelname)s %(message)s",
-        level=logging.INFO
-    )
 
     serializer = OrderSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)

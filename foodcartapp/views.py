@@ -44,7 +44,6 @@ def banners_list_api(request):
 @api_view(['GET'])
 def product_list_api(request):
     products = Product.objects.select_related('category').available()
-
     dumped_products = []
     for product in products:
         dumped_product = {
@@ -89,7 +88,6 @@ class OrderSerializer(ModelSerializer):
 @transaction.atomic
 @api_view(['POST'])
 def register_order(request):
-
     serializer = OrderSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 

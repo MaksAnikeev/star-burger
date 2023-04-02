@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='order',
             name='payment',
-            field=models.CharField(choices=[('Right_now', (('cash', 'Наличностью'), ('by_card', 'Электронно'))), ('Delivery_pay', (('cash', 'Наличностью'), ('by_card', 'Электронно')))], db_index=True, default='Delivery_pay', max_length=10, verbose_name='статус заказа'),
+            field=models.CharField(choices=[('Right_now', (('cash', 'Наличностью'), ('by_card', 'Электронно'))), ('Delivery_pay', (('cash', 'Наличностью'), ('by_card', 'Электронно')))], db_index=True, default='Delivery_pay', max_length=50, verbose_name='статус заказа'),
         ),
     ]

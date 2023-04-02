@@ -1,6 +1,7 @@
 import os
 
 import dj_database_url
+# import psycopg2
 
 from environs import Env
 
@@ -19,6 +20,7 @@ ROLLBAR_ACCESS_TOKEN = env('ROLLBAR_ACCESS_TOKEN')
 DEBUG = env.bool('DEBUG', True)
 DEV = env.bool('DEV', True)
 user = env('USER')
+POSTGRE_URL = env('POSTGRE_URL')
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', ['127.0.0.1', 'localhost'])
 API_URL = env('API_URL', 'http://127.0.0.1:8000')
@@ -98,7 +100,7 @@ MEDIA_URL = '/media/'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='sqlite:////{0}'.format(os.path.join(BASE_DIR, 'db.sqlite3'))
+        default=POSTGRE_URL,
     )
 }
 

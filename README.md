@@ -87,6 +87,15 @@ DEV=False - для отладки
 USER='max'
 ```
 
+Создайте базу данных в [PostgreSQL](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-django-application-on-ubuntu-14-04)
+и получите данные `USER`, `PASSWORD`, имя базы данных `NAME` и внесите эти данные
+в виде URL в `.env`
+```pycon
+POSTGRE_URL='postgres://[user[:password]@][netloc][:port][/dbname][?param1=value1&...]'
+пример
+POSTGRE_URL='postgres://max:mypassword@localhost/mybase'
+```
+
 Если вы закончили с отладкой и переходите в "боевой" режим, то укажите
 в файле `.env`:
 ```pycon

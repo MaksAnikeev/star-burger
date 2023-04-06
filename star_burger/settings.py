@@ -22,7 +22,7 @@ DEV = env.bool('DEV', True)
 user = env('USER')
 POSTGRE_URL = env('POSTGRE_URL')
 
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', ['127.0.0.1', 'localhost'])
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 API_URL = env('API_URL', 'http://127.0.0.1:8000')
 
 INSTALLED_APPS = [

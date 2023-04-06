@@ -93,7 +93,7 @@ USER='max'
 ```pycon
 POSTGRE_URL='postgres://[user[:password]@][netloc][:port][/dbname][?param1=value1&...]'
 пример
-POSTGRE_URL='postgres://max:mypassword@localhost/mybase'
+POSTGRE_URL='postgres://max:12345@localhost/maxburger1'
 ```
 
 Если вы закончили с отладкой и переходите в "боевой" режим, то укажите

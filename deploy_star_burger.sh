@@ -22,6 +22,7 @@ last_commit_hash=$(git rev-parse HEAD)
 curl -H "X-Rollbar-Access-Token: $ROLLBAR_ACCESS_TOKEN" \
      -H "Content-Type: application/json" \
      -X POST 'https://api.rollbar.com/api/1/deploy' \
-     -d '{"environment": "production","revision": "'$last_commit_hash'","rollbar_name": "maks","local_us>     -s >/dev/null
+     -d '{"environment": "production","revision": "'$last_commit_hash'","rollbar_name": "maks","local_username": "root","status": "succeeded"}' \
+     -s >/dev/null
 
 echo 'Деплой успешно выполнен';

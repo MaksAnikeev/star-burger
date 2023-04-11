@@ -19,7 +19,7 @@ ROLLBAR_ACCESS_TOKEN = env('ROLLBAR_ACCESS_TOKEN')
 DEBUG = env.bool('DEBUG', True)
 DEV = env.bool('DEV', True)
 user = env('USER')
-POSTGRE_URL = env('POSTGRE_URL')
+POSTGRES_URL = env('POSTGRES_URL')
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 API_URL = env('API_URL', 'http://127.0.0.1:8000')
@@ -38,24 +38,37 @@ INSTALLED_APPS = [
     'rest_framework',
 ]
 
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'rollbar.contrib.django.middleware.RollbarNotifierMiddleware',
-]
 
-ROLLBAR = {
-    'access_token': ROLLBAR_ACCESS_TOKEN,
-    'environment': f'{user}_development' if DEV else f'{user}_production',
-    'code_version': '1.0',
-    'root': BASE_DIR,
-}
+if env('ROLLBAR'):
+    MIDDLEWARE = [
+        'django.middleware.security.SecurityMiddleware',
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+        'django.middleware.clickjacking.XFrameOptionsMiddleware',
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+        'rollbar.contrib.django.middleware.RollbarNotifierMiddleware',
+    ]
+    ROLLBAR = {
+        'access_token': ROLLBAR_ACCESS_TOKEN,
+        'environment': f'{user}_development' if DEV else f'{user}_production',
+        'code_version': '1.0',
+        'root': BASE_DIR,
+    }
+
+else:
+    MIDDLEWARE = [
+        'django.middleware.security.SecurityMiddleware',
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+        'django.middleware.clickjacking.XFrameOptionsMiddleware',
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+    ]
 
 ROOT_URLCONF = 'star_burger.urls'
 

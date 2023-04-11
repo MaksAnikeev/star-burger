@@ -15,10 +15,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 YANDEX_API_KEY = env('YANDEX_API_KEY')
 SECRET_KEY = env('SECRET_KEY')
-ROLLBAR_ACCESS_TOKEN = env('ROLLBAR_ACCESS_TOKEN')
 DEBUG = env.bool('DEBUG', True)
+
+ROLLBAR = env.bool('ROLLBAR', False)
+ROLLBAR_ACCESS_TOKEN = env('ROLLBAR_ACCESS_TOKEN')
 DEV = env.bool('DEV', True)
 user = env('USER', 'user')
+
 POSTGRES_URL = env('POSTGRES_URL')
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
@@ -39,7 +42,7 @@ INSTALLED_APPS = [
 ]
 
 
-if env('ROLLBAR'):
+if ROLLBAR:
     MIDDLEWARE = [
         'django.middleware.security.SecurityMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
@@ -112,7 +115,7 @@ MEDIA_URL = '/media/'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=POSTGRE_URL,
+        default=POSTGRES_URL,
     )
 }
 

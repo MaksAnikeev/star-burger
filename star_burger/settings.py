@@ -18,7 +18,7 @@ SECRET_KEY = env('SECRET_KEY')
 ROLLBAR_ACCESS_TOKEN = env('ROLLBAR_ACCESS_TOKEN')
 DEBUG = env.bool('DEBUG', True)
 DEV = env.bool('DEV', True)
-user = env('USER')
+user = env('USER', 'user')
 POSTGRES_URL = env('POSTGRES_URL')
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')

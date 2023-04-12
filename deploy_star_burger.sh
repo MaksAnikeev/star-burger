@@ -13,7 +13,6 @@ npm ci --dev
 echo $(/usr/bin/env python3 manage.py collectstatic --noinput);
 echo $(/usr/bin/env python3 manage.py migrate --noinput);
 
-systemctl daemon-reload
 systemctl restart postgresql
 systemctl restart burger-example
 systemctl reload nginx

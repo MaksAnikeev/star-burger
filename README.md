@@ -111,18 +111,19 @@ USER='max'
 и получите данные `USER`, `PASSWORD`, имя базы данных `NAME` и внесите эти данные
 в виде URL в `.env`
 ```pycon
-POSTGRE_URL='postgres://[user[:password]@][netloc][:port][/dbname][?param1=value1&...]'
+POSTGRES_URL='postgres://[user[:password]@][netloc][:port][/dbname][?param1=value1&...]'
 пример
-POSTGRE_URL='postgres://max:12345@localhost/maxburger1'
+POSTGRES_URL='postgres://max:12345@localhost/maxburger1'
 ```
 
 Если вы закончили с отладкой и переходите в "боевой" режим, то укажите
 в файле `.env`:
 ```pycon
 DEBUG=False
+DEV=False
 ```
 
-Создайте файл базы данных SQLite и отмигрируйте её следующей командой:
+Отмигрируйте базу данных Postgre на своем компьютере функцией:
 
 ```sh
 python manage.py migrate
@@ -208,6 +209,14 @@ Parcel будет следить за файлами в каталоге `bundle
 Настроить бэкенд: создать файл `.env` в каталоге `star_burger/` со следующими настройками:
 
 - `DEBUG` — дебаг-режим. Поставьте `False`.
+- `ROLLBAR` — включить логирование в роллбаре. Поставьте `True`.
+- `DEV` — режим информирования в роллбаре. Поставьте `False`, чтобы указывался комментарий `production`в роллбаре.
+- `ROLLBAR_ACCESS_TOKEN` - ваш токен в роллбаре
+- `USER` - ваше имя для отражения этой информации в роллбаре
+- `POSTGRES_URL` - адрес вашей базы в постгри, пример:
+```pycon
+POSTGRES_URL='postgres://max:12345@localhost/maxburger1'
+```
 - `SECRET_KEY` — секретный ключ проекта. Он отвечает за шифрование на сайте. Например, им зашифрованы все пароли на вашем сайте.
 - `ALLOWED_HOSTS` — [см. документацию Django](https://docs.djangoproject.com/en/3.1/ref/settings/#allowed-hosts)
 - `YANDEX_API_KEY` - для вычисления расстояний между клиентом и различными ресторанами Его можно получить на сайте [яндекс разработчика](https://developer.tech.yandex.ru/services/), а это

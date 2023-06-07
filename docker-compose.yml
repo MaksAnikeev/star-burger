@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  pgdb:
+    image: postgres
+    environment:
+      - POSTGRES_DB=maxburger
+      - POSTGRES_USER=max
+      - POSTGRES_PASSWORD=Anykey
+    container_name: pgdb
+    volumes:
+      - .:/var/lib/postgresql/data1
+    ports:
+      - '5432:5432'
+
+  app_django:
+    build: .
+    command: >
+      /bin/sh -c "python3 manage.py makemigrations --force-color --no-input -v 3
+      && python3 manage.py makemigrations --merge --no-input -v 3
+      && python3 manage.py migrate --force-color -v 3
+      && python3 manage.py createsuperuser --noinput
+      && python3 manage.py collectstatic
+      && python3 -m gunicorn -b 0.0.0.0:80 star_burger.wsgi --reload"
+    environment:
+      SECRET_KEY: django-insecure-0if40nf4nf93n4
+      DJANGO_SUPERUSER_USERNAME: admin
+      DJANGO_SUPERUSER_PASSWORD: admin
+      DJANGO_SUPERUSER_EMAIL: admin@example.com
+      YANDEX_API_KEY: 485691e3-142b-45cf-83d2-7ffbf02a8adc
+      ALLOWED_HOSTS: 80.249.146.99,anikeev-maks.ru,127.0.0.1:8080,127.0.0.1,localhost
+      DEBUG: True
+      ROLLBAR: False
+      DEV: True
+      USER: max
+      ROLLBAR_ACCESS_TOKEN: 521c8a98a373486699086b0beb34e485
+      POSTGRES_URL: postgres://max:Anykey@pgdb:5432/maxburger
+    volumes:
+      - .:/app
+    ports:
+      - 80:80
+    depends_on:
+      - pgdb

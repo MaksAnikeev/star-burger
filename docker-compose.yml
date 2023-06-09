@@ -19,9 +19,12 @@ services:
       /bin/sh -c "python3 manage.py makemigrations --force-color --no-input -v 3
       && python3 manage.py makemigrations --merge --no-input -v 3
       && python3 manage.py migrate --force-color -v 3
-      && python3 manage.py createsuperuser --noinput
-      && python3 manage.py collectstatic
-      && python3 -m gunicorn -b 0.0.0.0:80 star_burger.wsgi --reload"
+      && python manage.py runserver 0.0.0.0:80"
+#      && python3 manage.py createsuperuser --noinput
+#      && python3 manage.py collectstatic
+#      && python3 -m gunicorn -b 0.0.0.0:80 star_burger.wsgi --reload"
+
+
     environment:
       SECRET_KEY: django-insecure-0if40nf4nf93n4
       DJANGO_SUPERUSER_USERNAME: admin

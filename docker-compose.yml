@@ -26,7 +26,7 @@ services:
       DJANGO_SUPERUSER_PASSWORD: admin
       DJANGO_SUPERUSER_EMAIL: admin@example.com
       YANDEX_API_KEY: 485691e3-142b-45cf-83d2-7ffbf02a8adc
-      ALLOWED_HOSTS: 80.249.146.99,anikeev-maks.ru,127.0.0.1:8000,127.0.0.1,localhost
+      ALLOWED_HOSTS: 84.38.181.226,anikeev-maks.ru,127.0.0.1:8000,127.0.0.1,localhost
       DEBUG: True
       ROLLBAR: False
       DEV: True

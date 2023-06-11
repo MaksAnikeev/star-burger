@@ -13,18 +13,14 @@ services:
     ports:
       - '5432:5432'
 
-  app_django:
+  backend:
     build: .
     command: >
       /bin/sh -c "python3 manage.py makemigrations --force-color --no-input -v 3
-      && python3 manage.py makemigrations --merge --no-input -v 3
       && python3 manage.py migrate --force-color -v 3
-      && python manage.py runserver 0.0.0.0:80"
-#      && python3 manage.py createsuperuser --noinput
-#      && python3 manage.py collectstatic
-#      && python3 -m gunicorn -b 0.0.0.0:80 star_burger.wsgi --reload"
-
-
+      && python3 manage.py collectstatic --noinput
+      && python3 -m gunicorn -b 0.0.0.0:80 star_burger.wsgi --reload"
+#      && python manage.py runserver 0.0.0.0:80"
     environment:
       SECRET_KEY: django-insecure-0if40nf4nf93n4
       DJANGO_SUPERUSER_USERNAME: admin
@@ -32,15 +28,29 @@ services:
       DJANGO_SUPERUSER_EMAIL: admin@example.com
       YANDEX_API_KEY: 485691e3-142b-45cf-83d2-7ffbf02a8adc
       ALLOWED_HOSTS: 80.249.146.99,anikeev-maks.ru,127.0.0.1:8080,127.0.0.1,localhost
-      DEBUG: True
+      DEBUG: False
       ROLLBAR: False
-      DEV: True
+      DEV: False
       USER: max
       ROLLBAR_ACCESS_TOKEN: 521c8a98a373486699086b0beb34e485
       POSTGRES_URL: postgres://max:Anykey@pgdb:5432/maxburger
-    volumes:
-      - .:/app
+#    env_file:
+#      - ./.env
+#    volumes:
+#      - .bundles:/app/bundles
     ports:
-      - 80:80
+      - '80:80'
     depends_on:
       - pgdb
+      - nginx
+    links:
+      - nginx
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "443:443"
+    volumes:
+      - ./hosts:/etc/nginx/conf.d
+    restart:
+      always

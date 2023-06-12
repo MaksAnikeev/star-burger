@@ -28,10 +28,10 @@ services:
       DJANGO_SUPERUSER_EMAIL: admin@example.com
       YANDEX_API_KEY: 485691e3-142b-45cf-83d2-7ffbf02a8adc
       ALLOWED_HOSTS: 84.38.181.226,anikeev-maks.ru,127.0.0.1:8000,127.0.0.1,localhost
-      DEBUG: True
-      ROLLBAR: False
-      DEV: True
-      USER: max
+      DEBUG: 'False'
+      ROLLBAR: 'False'
+      DEV: 'False'
+      USER: 'max'
       ROLLBAR_ACCESS_TOKEN: 521c8a98a373486699086b0beb34e485
       POSTGRES_URL: postgres://max:Anykey@pgdb:5432/maxburger
     ports:

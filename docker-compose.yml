@@ -34,15 +34,13 @@ services:
       USER: 'max'
       ROLLBAR_ACCESS_TOKEN: 521c8a98a373486699086b0beb34e485
       POSTGRES_URL: postgres://max:Anykey@pgdb:5432/maxburger
-#    ports:
-#      - '8000:8000'
-    expose:
-      - 8000
+    ports:
+      - '8000:8000'
     depends_on:
       - pgdb
       - nginx
-#    links:
-#      - nginx
+    links:
+      - nginx
 
   nginx:
     image: nginx:latest

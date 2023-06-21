@@ -40,15 +40,15 @@ services:
       - '8000:8000'
     depends_on:
       - pgdb
-#      - nginx
-#    links:
-#      - nginx
+      - nginx
+    links:
+      - nginx
 
-#  nginx:
-#    image: nginx:latest
-#    ports:
-#      - "443:443"
-#    volumes:
-#      - ./hosts:/etc/nginx/conf.d
-#    restart:
-#      always
+  nginx:
+    image: nginx:latest
+    ports:
+      - "443:443"
+    volumes:
+      - ./hosts:/etc/nginx/conf.d
+    restart:
+      always

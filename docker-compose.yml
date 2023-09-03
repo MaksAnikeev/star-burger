@@ -42,7 +42,6 @@ services:
       - nginx
     volumes:
       - collected_burger:/app/collected_static
-      - media_burger:/app/mediafiles
 
   nginx:
     image: nginx:latest
@@ -50,11 +49,10 @@ services:
       - 80:80
     volumes:
       - ./hosts:/etc/nginx/conf.d
+      - ./media:/burger/mediafiles
       - collected_burger:/burger/collected_static
-      - media_burger:/burger/mediafiles
     restart:
       always
 
 volumes:
   collected_burger:
-  media_burger:

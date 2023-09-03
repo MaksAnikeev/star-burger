@@ -27,7 +27,7 @@ services:
       DJANGO_SUPERUSER_EMAIL: admin@example.com
       YANDEX_API_KEY: 485691e3-142b-45cf-83d2-7ffbf02a8adc
       ALLOWED_HOSTS: 80.249.146.108,127.0.0.1:8080,127.0.0.1,localhost,starburger
-      DEBUG: True
+      DEBUG: False
       ROLLBAR: False
       DEV: False
       USER: max

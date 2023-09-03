@@ -42,7 +42,7 @@ services:
       - nginx
     volumes:
       - collected_burger:/app/collected_static
-      - collected_burger:/app/media
+      - media_burger:/app/media
 
   nginx:
     image: nginx:latest
@@ -51,9 +51,10 @@ services:
     volumes:
       - ./hosts:/etc/nginx/conf.d
       - collected_burger:/burger/collected_static
-      - collected_burger:/burger/media
+      - media_burger:/burger/media
     restart:
       always
 
 volumes:
   collected_burger:
+  media_burger:

@@ -13,14 +13,13 @@ services:
     ports:
       - '5432:5432'
 
-
   backend:
     build: .
     command: >
       /bin/sh -c "python3 manage.py makemigrations --force-color --no-input -v 3
       && python3 manage.py migrate --force-color -v 3
       && python3 manage.py collectstatic --noinput
-      && python3 -m gunicorn -b 0.0.0.0:8000 star_burger.wsgi --reload"
+      && python3 -m gunicorn -b 0.0.0.0:8080 star_burger.wsgi --reload"
 #      && python3 manage.py runserver 0.0.0.0:8000"
     environment:
       SECRET_KEY: django-insecure-0if40nf4nf93n4
@@ -28,26 +27,34 @@ services:
       DJANGO_SUPERUSER_PASSWORD: admin
       DJANGO_SUPERUSER_EMAIL: admin@example.com
       YANDEX_API_KEY: 485691e3-142b-45cf-83d2-7ffbf02a8adc
-      ALLOWED_HOSTS: 84.38.180.167,anikeev-maks.ru,127.0.0.1:8000,127.0.0.1,localhost
-      DEBUG: 'False'
-      ROLLBAR: 'False'
-      DEV: 'False'
-      USER: 'max'
+      ALLOWED_HOSTS: 84.38.180.167,anikeev-maks.ru,127.0.0.1:8080,127.0.0.1,localhost,starburger
+      DEBUG: True
+      ROLLBAR: False
+      DEV: False
+      USER: max
       ROLLBAR_ACCESS_TOKEN: 521c8a98a373486699086b0beb34e485
       POSTGRES_URL: postgres://max:Anykey@pgdb:5432/maxburger
-    ports:
-      - '8000:8000'
+    expose:
+      - 8080
+#    ports:
+#      - '8080:8080'
     depends_on:
       - pgdb
       - nginx
     links:
       - nginx
+    volumes:
+      - collected_burger:/app/collected_static
 
   nginx:
     image: nginx:latest
     ports:
-      - "443:443"
+      - 1337:80
     volumes:
       - ./hosts:/etc/nginx/conf.d
+      - collected_burger:/burger/collected_static
     restart:
       always
+
+volumes:
+  collected_burger:
